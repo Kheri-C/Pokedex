@@ -1,5 +1,7 @@
 package com.example.pokedexv24.pantallas
 
+import android.util.Log
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -14,6 +16,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.example.pokedexv24.data.APIService
+import com.example.pokedexv24.data.Results
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
 @Composable
 
@@ -59,10 +68,13 @@ fun Pokemon (name: String) {
                 }
             OutlinedButton(onClick = { expanded.value=!expanded.value }){
                 Text(if (expanded.value) "hide" else "catch")
+
+
             }
         }
     }
 }
+
 
 
 @Composable
@@ -74,7 +86,37 @@ private fun Pokemones (cameos: List<String> = List( 10) { "$it" }) {
             .verticalScroll(scrollState)
     ) {
         for (cameo in cameos) {
+            getAllData(cameo)
+
             Pokemon(cameo)
         }
     }
 }
+
+lateinit var results: Results
+
+fun getAllData(pokemon: String) {
+
+
+    val callToService = getRetrofit().create(APIService::class.java)
+
+    CoroutineScope(Dispatchers.IO).launch {
+        val responseFromService = callToService.getPokemons("$pokemon/")
+            results = responseFromService.body() as Results
+
+            if (responseFromService.isSuccessful) {
+                Log.i("Pokemons", results.name)
+
+            }
+    }
+}
+
+
+private fun getRetrofit(): Retrofit {
+    return Retrofit.Builder()
+        .baseUrl("https://pokeapi.co/api/v2/pokemon/")
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+}
+
