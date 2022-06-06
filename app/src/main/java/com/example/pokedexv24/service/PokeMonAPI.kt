@@ -6,7 +6,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 
 interface PokeMonApi {
-    @GET("pokemon?limit=30")
+    @GET("pokemon?limit=151")
     suspend fun getPokemonList(): ListaPokemons
 
     companion object {

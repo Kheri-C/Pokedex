@@ -19,7 +19,7 @@ class PokemonViewModel : ViewModel() {
             try {
                 val pokemons = apiService.getPokemonList()
                 listaPokemons = pokemons.results
-                Log.i( "Pokedex", listaPokemons.toString())
+                //Log.i( "Pokedex", listaPokemons.toString())
             } catch (e: Exception) {
                 errorMessage = e.message.toString()
             }
